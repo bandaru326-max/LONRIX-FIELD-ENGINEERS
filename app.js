@@ -1,5 +1,6 @@
-// API Endpoint Constants
-const API_BASE = window.location.origin;
+const API_BASE = (window.location.protocol === "file:" || window.location.hostname.includes("vercel.app")) 
+  ? "http://localhost:3008" 
+  : window.location.origin;
 
 // Application State
 let workLogs = []; // Stores all records fetched from server
