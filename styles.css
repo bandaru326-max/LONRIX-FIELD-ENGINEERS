@@ -1,0 +1,559 @@
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+/* CSS Variables for Theme Consistency */
+:root {
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: 'Outfit', sans-serif;
+
+  /* Color Palette - Premium Slate & Indigo */
+  --bg-primary: #0f172a;       /* Slate 900 */
+  --bg-secondary: #1e293b;     /* Slate 800 */
+  --bg-tertiary: #334155;      /* Slate 700 */
+  --border-color: #334155;     /* Subtle grid lines */
+  --text-primary: #f1f5f9;     /* Slate 100 */
+  --text-secondary: #94a3b8;   /* Slate 400 */
+  --text-muted: #475569;       /* Slate 600 */
+  
+  --primary: #6366f1;          /* Indigo 500 */
+  --primary-hover: #4f46e5;    /* Indigo 600 */
+  --primary-glow: rgba(99, 102, 241, 0.15);
+  
+  /* Status Colors */
+  --success: #10b981;          /* Emerald 500 */
+  --success-bg: rgba(16, 185, 129, 0.15);
+  --danger: #ef4444;           /* Rose 500 */
+  --danger-bg: rgba(239, 68, 68, 0.15);
+  --warning: #f59e0b;          /* Amber 500 */
+  --warning-bg: rgba(245, 158, 11, 0.15);
+  --info: #0ea5e9;             /* Sky 500 */
+  --info-bg: rgba(14, 165, 233, 0.15);
+  
+  /* UI Elements */
+  --card-radius: 12px;
+  --button-radius: 6px;
+  --transition-fast: 0.1s ease;
+  --transition-normal: 0.2s ease-in-out;
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header & Logo styling */
+header {
+  background-color: rgba(19, 29, 49, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-icon {
+  background: linear-gradient(135deg, var(--primary), #a855f7);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: white;
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.025em;
+  background: linear-gradient(to right, #ffffff, #cbd5e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  background-color: rgba(30, 41, 59, 0.6);
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--warning);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--warning);
+}
+
+/* Hero / Banner section */
+.hero-section {
+  background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent 30%);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+  background-color: var(--primary-glow);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  margin-bottom: 0.5rem;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-description {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+/* Main Content Layout */
+main {
+  flex: 1;
+  max-width: 1600px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Dashboard Analytics Section */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.metric-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--card-radius);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--primary);
+}
+
+.metric-card.accent-success::before { background: var(--success); }
+.metric-card.accent-danger::before { background: var(--danger); }
+.metric-card.accent-warning::before { background: var(--warning); }
+.metric-card.accent-info::before { background: var(--info); }
+
+.metric-title {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.metric-subtitle {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+/* Control & Filter Panel */
+.control-panel {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--card-radius);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-md);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.75rem;
+}
+
+.panel-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.panel-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn {
+  font-family: var(--font-primary);
+  font-weight: 500;
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--button-radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition-fast);
+}
+
+.btn-secondary {
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(51, 65, 85, 0.8);
+  border-color: var(--text-secondary);
+}
+
+.btn-danger {
+  background-color: var(--danger-bg);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+.btn-danger:hover {
+  background-color: var(--danger);
+  color: white;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.filter-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-control {
+  font-family: var(--font-primary);
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--button-radius);
+  color: var(--text-primary);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-glow);
+}
+
+/* EXCEL-LIKE SPREADSHEET GRID SYSTEM */
+.table-container {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow-x: auto;
+  box-shadow: var(--shadow-lg);
+}
+
+table.spreadsheet-grid {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Maintains strict column widths like Excel */
+}
+
+table.spreadsheet-grid th {
+  background-color: var(--bg-tertiary); /* Soft Slate header background */
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.6rem 0.5rem;
+  border: 1px solid var(--border-color);
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+table.spreadsheet-grid td {
+  padding: 0; /* Input spans full cell width/height */
+  border: 1px solid var(--border-color); /* Strict Excel gridline borders */
+  vertical-align: middle;
+  background-color: rgba(15, 23, 42, 0.15); /* Soft, comfortable cell background */
+  transition: background-color var(--transition-fast);
+}
+
+/* Excel Cell Inputs styling */
+.cell-input {
+  width: 100%;
+  height: 38px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  padding: 0.5rem;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+/* Input elements state styling */
+select.cell-input {
+  cursor: pointer;
+  padding-right: 1.5rem;
+  /* Custom arrow color support for dark themes */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.25rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25em 1.25em;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Focused active cell border highlight (Like Excel) */
+.cell-input:focus {
+  background-color: rgba(99, 102, 241, 0.06);
+  box-shadow: inset 0 0 0 2px var(--primary);
+  color: white;
+}
+
+/* Static read-only cells (like Operator Number, Date, Day) */
+.cell-static {
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: rgba(11, 15, 25, 0.3);
+  height: 38px;
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+/* Conditional Row disabled format (for Absent/Holiday) */
+tr.row-absent td,
+tr.row-holiday td {
+  background-color: rgba(30, 41, 59, 0.2);
+}
+
+tr.row-absent input.cell-input:not(.editable-always),
+tr.row-absent select.cell-input:not(.editable-always),
+tr.row-holiday input.cell-input:not(.editable-always),
+tr.row-holiday select.cell-input:not(.editable-always) {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Inline Badges inside dropdowns/status fields */
+.badge-cell-present { color: #51e2a0; font-weight: 600; }
+.badge-cell-absent { color: #f87171; font-weight: 600; }
+.badge-cell-holiday { color: #fbbf24; font-weight: 600; }
+
+/* Sync state status icon at end of row */
+.sync-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  height: 38px;
+}
+
+.sync-badge.saving::after {
+  content: '⏳';
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+.sync-badge.synced::after {
+  content: '✅';
+}
+
+.sync-badge.error::after {
+  content: '⚠️';
+}
+
+/* CSS Animations */
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+/* Footer Section */
+footer {
+  background-color: rgba(11, 15, 25, 0.95);
+  border-top: 1px solid var(--border-color);
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  opacity: 0.8;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--text-primary);
+}
+
+/* Toast Notification Manager */
+.toast-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 2000;
+}
+
+.toast {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--button-radius);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 300px;
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  font-size: 0.85rem;
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-success { border-left: 4px solid var(--success); }
+.toast-error { border-left: 4px solid var(--danger); }
+.toast-warning { border-left: 4px solid var(--warning); }
+.toast-info { border-left: 4px solid var(--info); }
+
+/* responsive viewport styles */
+@media (max-width: 1200px) {
+  /* Keep table horizontally scrollable for tablet/mobile without collapsing, since it's an Excel sheet */
+  table.spreadsheet-grid {
+    min-width: 1800px; /* Forces Excel horizontal scrolling instead of crushing the grid */
+  }
+}

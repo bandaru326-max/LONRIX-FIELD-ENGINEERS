@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary SEO Metadata -->
+  <title>Lonrix - Shared Field Operations Spreadsheet & Tracking Hub</title>
+  <meta name="description" content="Lonrix is a professional, shared spreadsheet tracking application optimized for field engineers and operators. Manage operator work logs, vehicle deployments, stretch coverage, and test video completions directly on an Excel-like grid.">
+  <meta name="keywords" content="Lonrix, Field Tracking, Excel Grid, Operator Work Log, PIU representatives, Test Video Status, Starting Time, Ending Time, Shared Database">
+  <meta name="author" content="Lonrix Inc.">
+  <link rel="canonical" href="https://lonrix-engineering.example.com">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://lonrix-engineering.example.com">
+  <meta property="og:title" content="Lonrix - We Help Engineers Build Better Infrastructures">
+  <meta property="og:description" content="A shared, grid-based spreadsheet for daily operator tracking, attendance logging, and video inspection auditing. Real-time multi-device database sync.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1581092335397-9583fe92d232?q=80&w=1200&auto=format&fit=crop">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://lonrix-engineering.example.com">
+  <meta property="twitter:title" content="Lonrix - Shared Spreadsheet Portal">
+  <meta property="twitter:description" content="A shared, grid-based spreadsheet for daily operator tracking, attendance logging, and video inspection auditing. Real-time multi-device database sync.">
+  <meta property="twitter:image" content="https://images.unsplash.com/photo-1581092335397-9583fe92d232?q=80&w=1200&auto=format&fit=crop">
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- JSON-LD Structured Data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Lonrix",
+    "alternateName": "Lonrix Field Spreadsheet",
+    "description": "Shared Excel-style spreadsheet interface for field engineers to record operator attendance, stretch coverage, and test video logs in a central database.",
+    "applicationCategory": "BusinessApplication, EngineeringPlatform",
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "USD"
+    },
+    "provider": {
+      "@type": "Organization",
+      "name": "Lonrix Inc.",
+      "url": "https://lonrix-engineering.example.com"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <div class="logo-section">
+        <div class="logo-icon">L</div>
+        <span class="logo-text">Lonrix</span>
+      </div>
+      <!-- Role and Connection Status Group -->
+      <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <label class="filter-label" for="active-user-role" style="margin: 0; white-space: nowrap; font-size: 0.75rem;">Access Role:</label>
+          <select id="active-user-role" class="form-control" onchange="switchUserRole()" style="padding: 0.25rem 0.5rem; font-size: 0.8rem; height: 32px; min-width: 200px;">
+            <option value="User" selected>Operator / Engineer (User)</option>
+            <option value="Admin">Administrator (Admin)</option>
+          </select>
+        </div>
+        <div class="system-status" id="connection-status">
+          <div class="status-dot"></div>
+          <span>Connecting to Central Database...</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <span class="hero-badge">SHARED SPREADSHEET MANAGER</span>
+      <h1 class="hero-title" id="main-heading">We Help Engineers</h1>
+      <p class="hero-description">
+        Enter daily logs directly into the grid cells below. Changes are saved automatically in real-time to the shared database for all devices on your network.
+      </p>
+    </div>
+  </section>
+
+  <!-- Main Content Body -->
+  <main>
+    
+    <!-- Dashboard KPI Cards Section -->
+    <section class="dashboard-grid" aria-label="Key Performance Indicators">
+      <div class="metric-card accent-info" id="metric-operators">
+        <span class="metric-title">Operators Tracked</span>
+        <span class="metric-value" id="val-active-ops">10</span>
+        <span class="metric-subtitle">OP 1 to OP 10 active profiles</span>
+      </div>
+      <div class="metric-card accent-success" id="metric-stretch">
+        <span class="metric-title">Stretch Logged</span>
+        <span class="metric-value" id="val-total-stretch">0 km</span>
+        <span class="metric-subtitle">Total recorded work area (all time)</span>
+      </div>
+      <div class="metric-card" id="metric-attendance">
+        <span class="metric-title">Attendance Rate</span>
+        <span class="metric-value" id="val-attendance-rate">0%</span>
+        <span class="metric-subtitle">Present operators on active sheet</span>
+      </div>
+      <div class="metric-card accent-warning" id="metric-piu">
+        <span class="metric-title">PIU Rep Meetings</span>
+        <span class="metric-value" id="val-piu-meetings">0</span>
+        <span class="metric-subtitle">Meetings with AE/IE on active sheet</span>
+      </div>
+      <div class="metric-card accent-danger" id="metric-video">
+        <span class="metric-title">Video Quality Rate</span>
+        <span class="metric-value" id="val-video-rate">0%</span>
+        <span class="metric-subtitle">Completed test videos on active sheet</span>
+      </div>
+    </section>
+
+    <!-- Spreadsheet Controls Panel -->
+    <section class="control-panel" aria-label="Sheet Date Selector and Operations">
+      <div class="panel-header">
+        <h2 class="panel-title">
+          <span>📊</span> Operator Tracking Worksheet
+        </h2>
+        <div class="panel-actions">
+          <button class="btn btn-secondary" id="btn-export-csv" onclick="exportToCSV()">
+            <span>📥</span> Export CSV Report
+          </button>
+          <button class="btn btn-danger" id="btn-reset-data" onclick="resetDatabaseConfirm()">
+            <span>🔄</span> Clear Central Database
+          </button>
+        </div>
+      </div>
+
+      <!-- Date Sheet Selection and Navigation -->
+      <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <div class="filter-group" style="min-width: 250px;">
+          <label class="filter-label" for="selected-sheet-date">Select Work Log Date</label>
+          <input type="date" id="selected-sheet-date" class="form-control" onchange="loadDateSheet()" style="font-size: 1rem; font-weight: 600;">
+        </div>
+        <div style="margin-top: 1.25rem;">
+          <span style="font-size: 0.875rem; color: var(--text-secondary);">
+            Showing active rows for operators <strong>OP 1 - OP 10</strong>. Excel-like grid auto-saves upon edit.
+          </span>
+      </div>
+
+      <!-- Permissions Management Panel (Admin Only) -->
+      <div id="admin-permissions-panel" style="display: none; border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem;">
+        <h3 style="font-family: var(--font-display); font-size: 1rem; margin-bottom: 0.25rem; color: #a5b4fc; display: flex; align-items: center; gap: 0.5rem;">
+          <span>🛡️</span> Operator Permissions Manager (Admin Only)
+        </h3>
+        <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+          Control editing rights for Operators OP 1 - OP 10. Unchecking a box locks their spreadsheet row for regular Users.
+        </p>
+        <div class="permissions-toggle-grid" id="permissions-toggle-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.75rem;">
+          <!-- Dynamically populated checklist -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Excel-like Spreadsheet Data Grid -->
+    <section class="table-container" aria-label="Work logs spreadsheet grid">
+      <table id="records-table" class="spreadsheet-grid">
+        <thead>
+          <tr>
+            <th style="width: 85px;">Operator No</th>
+            <th style="width: 110px;">Date</th>
+            <th style="width: 100px;">Day</th>
+            <th style="width: 90px;">Starting Time</th>
+            <th style="width: 90px;">Ending Time</th>
+            <th style="width: 140px;">Stretch Covered</th>
+            <th style="width: 140px;">Attendance Status</th>
+            <th style="width: 280px;">Issues</th>
+            <th style="width: 130px;">Vehicle Number</th>
+            <th style="width: 110px;">AE Met (Yes/No)</th>
+            <th style="width: 110px;">IE Met (Yes/No)</th>
+            <th style="width: 140px;">Test Video Uploaded? (Yes/No)</th>
+            <th style="width: 150px;">Sync Completed? (Yes/No)</th>
+            <th style="width: 200px;">Test Video Issue Details</th>
+            <th style="width: 80px; text-align: center;">Status</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- Dynamic editable rows injected by JS -->
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-content">
+      <div style="text-align: left; max-width: 600px;">
+        <p>&copy; 2026 Lonrix Shared Database. Built for road construction management, field engineers, and field audits.</p>
+        <p style="font-size: 0.75rem; margin-top: 0.35rem; color: var(--text-secondary);">
+          Support & Engineering Queries: 📞 <strong>+91 70933 26484</strong> | ✉️ <strong><a href="mailto:bandaru326@gmail.com" style="color: #a5b4fc; text-decoration: underline;">bandaru326@gmail.com</a></strong>
+        </p>
+      </div>
+      <div class="footer-links">
+        <a href="#main-heading">Back to Top</a>
+        <a href="https://lonrix-engineering.example.com/privacy">Privacy Policy</a>
+        <a href="https://lonrix-engineering.example.com/terms">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-manager" aria-live="polite"></div>
+
+  <!-- Javascript Core Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "lonrix-field-hub",
+  "version": "1.0.0",
+  "description": "Shared database and server portal for Lonrix Field Operations",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "lonrix",
+    "field-engineering",
+    "tracking"
+  ],
+  "author": "Lonrix Inc.",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
