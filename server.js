@@ -3,10 +3,23 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { Redis } = require('@upstash/redis');
 
 const app = express();
 const PORT = process.env.PORT || 3008;
 const DB_FILE = path.join(__dirname, 'database.json');
+
+// Initialize Redis from Environment variables (Vercel KV / Upstash)
+let redis = null;
+if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+  redis = new Redis({
+    url: process.env.KV_REST_API_URL,
+    token: process.env.KV_REST_API_TOKEN,
+  });
+  console.log("Using Cloud database (Upstash Redis) for persistence.");
+} else {
+  console.log("Using Local file database (database.json) for persistence.");
+}
 
 // Middlewares
 app.use(cors());
@@ -23,7 +36,18 @@ function getDefaultPermissions() {
 }
 
 // Helper: Read database file
-function readDb() {
+async function readDb() {
+  if (redis) {
+    try {
+      const records = (await redis.get('lonrix:records')) || [];
+      const permissions = (await redis.get('lonrix:permissions')) || getDefaultPermissions();
+      return { records, permissions };
+    } catch (err) {
+      console.error("Error reading database from Redis:", err);
+      // Fallback to local files if Redis fails
+    }
+  }
+
   try {
     if (!fs.existsSync(DB_FILE)) {
       const initial = { records: [], permissions: getDefaultPermissions() };
@@ -53,7 +77,18 @@ function readDb() {
 }
 
 // Helper: Write database file
-function writeDb(data) {
+async function writeDb(data) {
+  if (redis) {
+    try {
+      await redis.set('lonrix:records', data.records);
+      await redis.set('lonrix:permissions', data.permissions);
+      return true;
+    } catch (err) {
+      console.error("Error writing to Redis database:", err);
+      return false;
+    }
+  }
+
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
     return true;
@@ -100,26 +135,26 @@ app.get('/api/status', (req, res) => {
 });
 
 // API: Get All Records
-app.get('/api/records', (req, res) => {
-  const db = readDb();
+app.get('/api/records', async (req, res) => {
+  const db = await readDb();
   res.json(db.records);
 });
 
 // API: Get Permissions Map
-app.get('/api/permissions', (req, res) => {
-  const db = readDb();
+app.get('/api/permissions', async (req, res) => {
+  const db = await readDb();
   res.json(db.permissions);
 });
 
 // API: Update Operator Permissions (Admin Only)
-app.post('/api/permissions', requireAdmin, (req, res) => {
-  const db = readDb();
+app.post('/api/permissions', requireAdmin, async (req, res) => {
+  const db = await readDb();
   db.permissions = {
     ...db.permissions,
     ...req.body
   };
 
-  if (writeDb(db)) {
+  if (await writeDb(db)) {
     res.json({ success: true, permissions: db.permissions });
   } else {
     res.status(500).json({ error: "Failed to save permissions to database." });
@@ -127,15 +162,15 @@ app.post('/api/permissions', requireAdmin, (req, res) => {
 });
 
 // API: Create a New Record
-app.post('/api/records', (req, res) => {
-  const db = readDb();
+app.post('/api/records', async (req, res) => {
+  const db = await readDb();
   const newRecord = {
     ...req.body,
     id: 'log_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7)
   };
 
   db.records.push(newRecord);
-  if (writeDb(db)) {
+  if (await writeDb(db)) {
     res.status(201).json(newRecord);
   } else {
     res.status(500).json({ error: "Failed to write record to database." });
@@ -143,9 +178,9 @@ app.post('/api/records', (req, res) => {
 });
 
 // API: Update an Existing Record
-app.put('/api/records/:id', (req, res) => {
+app.put('/api/records/:id', async (req, res) => {
   const id = req.params.id;
-  const db = readDb();
+  const db = await readDb();
   const index = db.records.findIndex(r => r.id === id);
 
   if (index === -1) {
@@ -157,7 +192,7 @@ app.put('/api/records/:id', (req, res) => {
     id: id
   };
 
-  if (writeDb(db)) {
+  if (await writeDb(db)) {
     res.json(db.records[index]);
   } else {
     res.status(500).json({ error: "Failed to save updates to database." });
@@ -165,9 +200,9 @@ app.put('/api/records/:id', (req, res) => {
 });
 
 // API: Delete a Record (Allowed for all but restricted to Admin via client permission rules)
-app.delete('/api/records/:id', (req, res) => {
+app.delete('/api/records/:id', async (req, res) => {
   const id = req.params.id;
-  const db = readDb();
+  const db = await readDb();
   const initialLength = db.records.length;
   
   db.records = db.records.filter(r => r.id !== id);
@@ -176,7 +211,7 @@ app.delete('/api/records/:id', (req, res) => {
     return res.status(404).json({ error: "Record not found." });
   }
 
-  if (writeDb(db)) {
+  if (await writeDb(db)) {
     res.json({ success: true, message: "Record deleted successfully." });
   } else {
     res.status(500).json({ error: "Failed to delete record from database." });
@@ -184,11 +219,11 @@ app.delete('/api/records/:id', (req, res) => {
 });
 
 // API: Reset Database (Wipe records, clear database - Admin Only)
-app.post('/api/reset', requireAdmin, (req, res) => {
-  const db = readDb();
+app.post('/api/reset', requireAdmin, async (req, res) => {
+  const db = await readDb();
   db.records = []; // Clear records but preserve operator permissions setup
 
-  if (writeDb(db)) {
+  if (await writeDb(db)) {
     res.json({ success: true, message: "Database records cleared successfully." });
   } else {
     res.status(500).json({ error: "Failed to reset database." });
@@ -201,11 +236,15 @@ app.get('*', (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`\n======================================================`);
-  console.log(`   LONRIX FIELD MONITORING CENTRAL HUB IS LIVE`);
-  console.log(`======================================================`);
-  console.log(`* Local Access:        http://localhost:${PORT}`);
-  console.log(`* Shared Network Link: http://${LOCAL_IP}:${PORT}`);
-  console.log(`======================================================\n`);
-});
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`\n======================================================`);
+    console.log(`   LONRIX FIELD MONITORING CENTRAL HUB IS LIVE`);
+    console.log(`======================================================`);
+    console.log(`* Local Access:        http://localhost:${PORT}`);
+    console.log(`* Shared Network Link: http://${LOCAL_IP}:${PORT}`);
+    console.log(`======================================================\n`);
+  });
+}
+
+module.exports = app;
